@@ -1,0 +1,5 @@
+#	icx-cl -fsycl /Qiopenmp /Qopenmp-targets:<arch> sycl.device.exe /Fesycle.device.exe
+sycl.device.exe: sycl.device.cpp
+	icx-cl -fsycl /Qiopenmp sycl.device.cpp /Fesycl.device.exe
+hello_world.exe: hello_world.cpp
+	icx-cl -fsycl /Qiopenmp hello_world.cpp /Fehello_world.exe
