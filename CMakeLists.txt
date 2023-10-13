@@ -13,3 +13,4 @@ endmacro()
 
 exe_from_single_source(hello_world)
 exe_from_single_source(sycl_device)
+exe_from_single_source(simple_codeplay_sycl_app)

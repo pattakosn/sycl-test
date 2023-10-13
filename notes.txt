@@ -1,0 +1,5 @@
+sycl-ls
+rocminfo
+rocminfo | grep 'Name: *gfx.*'
+icpx -fsycl -fsycl-targets=amdgcn-amd-amdhsa         -Xsycl-target-backend --offload-arch=gfx90c         -o simple-sycl-app simple-sycl-app.cpp
+https://developer.codeplay.com/products/oneapi/amd/2023.2.1/guides/get-started-guide-amd.html
