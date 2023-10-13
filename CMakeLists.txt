@@ -1,6 +1,8 @@
-cmake_minimum_required(VERSION 3.23)
-
+cmake_minimum_required(VERSION 3.27)
 project(sycl-tests VERSION 0.1 DESCRIPTION "SyCL tests playground" LANGUAGES CXX)
+
+#set(CMAKE_C_COMPILER icx)
+#set(CMAKE_CXX_COMPILER "icpx")
 
 find_package(IntelSYCL REQUIRED)
 
