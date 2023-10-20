@@ -1,6 +1,7 @@
 #include <sycl/sycl.hpp>
 
 class scalar_add;
+class stream_example;
 
 // Function device selector
 int intel_gpu_selector1(const sycl::device &dev) {
@@ -73,6 +74,15 @@ int main(void)
 						cgh.single_task<scalar_add>([=]() { accR[0] = accA[0] + accB[0]; });
 						})
 			.wait();
+			
+			// This is a stream example. i do not quite get it yet.
+			defaultQueue1
+				.submit([&](sycl::handler &cgh) {
+						auto os = sycl::stream{128, 128, cgh};
+						cgh.single_task<stream_example>([=]() { os << "Hello World!\n"; });
+						})
+			.wait();
+
 		}
 
 		defaultQueue1.throw_asynchronous();
