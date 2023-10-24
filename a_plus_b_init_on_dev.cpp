@@ -25,18 +25,14 @@ private:
 
 int main(void)
 {
-try{
-	constexpr size_t N = 1024;// * 1024 * 16;
-
+	constexpr size_t N = 1024 * 1024 * 16;
 	my_timer time_all;
-	std::vector<float> a(N);
-	std::vector<float> b(N);
 
+try{
 	for ( size_t i = 0.; i < N; ++i ) {
 		a[i] = i;
 		b[i] = 2. * i;
 	}
-	std::vector<float> r(N);
 	time_all.stop("Data initialization: ");
 
 	{
@@ -54,29 +50,30 @@ try{
 
 	time_all.start();
 	auto q = sycl::queue{sycl::gpu_selector_v};
-	std::cout << "\nChosen device: \"" << q.get_device().get_info<sycl::info::device::name>() << "\""	<< std::endl;
+	std::cout << "\nChosen device: \"" << q.get_device().get_info<sycl::info::device::name>() 
+		<< "\", max compute units: " << q.get_device().get_info<sycl::info::device::max_compute_units>()
+		<< std::endl;
 
 	auto bufA = sycl::buffer{a.data(), sycl::range{a.size()}};
 	auto bufB = sycl::buffer{b.data(), sycl::range{b.size()}};
 	auto bufR = sycl::buffer{r.data(), sycl::range{r.size()}};
-
+//for (int i =0; i < 1024;i++)
 	q.submit([&](sycl::handler &cgh) {
 		auto accA = sycl::accessor{bufA, cgh, sycl::read_only};
 		auto accB = sycl::accessor{bufB, cgh, sycl::read_only};
 		auto accR = sycl::accessor{bufR, cgh, sycl::write_only};
 
 		cgh.parallel_for<vector_add>(sycl::range(N), [=](sycl::id<1> id) { accR[id] = accA[id] + accB[id]; });
-	}).wait_and_throw();
+	});
 	
 	q.wait_and_throw();
 	time_all.stop("Data crunching: ");
-
-	for( int i = 0; i < 8*16; i+=16 )//N; i+= (1024*1024))
-		std::cout << " a[" << i << "]= " << a[i] << "\t+ b[" << i << "]= " << b[i] << "\t= c["<< i << "]= " << r[i] << std::endl;
 } catch(const sycl::exception &e) {
  	std::cout << "SyCL exception caught: " << e.what() << std::endl;
 } catch(const std::exception& e) {
 	std::cout << "STD exception caught: " << e.what() << std::endl;
 }
+	for( int i = 0; i < 8*16; i+=16 )//N; i+= (1024*1024))
+		std::cout << " a[" << i << "]= " << a[i] << "\t+ b[" << i << "]= " << b[i] << "\t= c["<< i << "]= " << r[i] << std::endl;
 	return EXIT_SUCCESS;
 }
