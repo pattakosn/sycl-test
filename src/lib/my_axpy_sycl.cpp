@@ -1,46 +1,18 @@
+#include "my_axpy_sycl.h"
+
 #include <sycl/sycl.hpp>
+#include <iostream>
 #include <vector>
 #include <cstdio>
-#include <chrono>
+#include "my_timer.hpp"
 
 class vector_add;
-class my_timer {
-public:
-	my_timer() {
-		t0 = std::chrono::steady_clock::now();
-		t1 = std::chrono::steady_clock::now();
-	};
-	void start(void) {
-		t0 = std::chrono::steady_clock::now();
-	}
-	void stop (std::string msg) {
-		t1 = std::chrono::steady_clock::now();
-		std::cout << msg << std::chrono::duration_cast<std::chrono::milliseconds> (t1 - t0).count() << "[ms]" << std::endl;
-		t0 = t1;
-	}
-private:
-	std::chrono::steady_clock::time_point t0;
-	std::chrono::steady_clock::time_point t1;
-};
 
-int main(void)
+void my_axpy_sycl(const std::vector<float>& input, std::vector<float>& result)
 {
-	constexpr size_t N = 1024 * 1024 * 16;
+	const auto N = input.size();
 try{
-	{
-		auto q = sycl::queue{sycl::default_selector_v};
-		std::cout << "default device on this system: \"" << q.get_device().get_info<sycl::info::device::name>() << "\"" << std::endl;
-	}
-	{
-		auto q = sycl::queue{sycl::gpu_selector_v};
-	 	std::cout << "default GPU device on this system: \"" << q.get_device().get_info<sycl::info::device::name>() << "\"" << std::endl;
-	}
-	{
-		auto q = sycl::queue{sycl::cpu_selector_v};
-		std::cout << "default CPU device on this system: \"" << q.get_device().get_info<sycl::info::device::name>() << "\"" << std::endl;
-	}
-	
-	auto q = sycl::queue{sycl::cpu_selector_v};
+	auto q = sycl::queue{sycl::gpu_selector_v};
 	std::cout << "\nChosen device: \"" << q.get_device().get_info<sycl::info::device::name>() 
 		<< "\", max compute units: " << q.get_device().get_info<sycl::info::device::max_compute_units>()
 		<< std::endl;
@@ -83,5 +55,4 @@ try{
 } catch(const std::exception& e) {
 	std::cout << "STD exception caught: " << e.what() << std::endl;
 }
-	return EXIT_SUCCESS;
 }

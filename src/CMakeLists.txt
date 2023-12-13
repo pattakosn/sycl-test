@@ -1,0 +1,8 @@
+exe_from_single_source(hello_world)
+exe_from_single_source(sycl_device)
+exe_from_single_source(simple_codeplay_sycl_app)
+exe_from_single_source(a_plus_b)
+exe_from_single_source(a_plus_b_init_on_dev)
+exe_from_single_source(create_and_add_buffers)
+
+add_subdirectory(lib)

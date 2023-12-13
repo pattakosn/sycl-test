@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.23)
 project(sycl-tests VERSION 0.1 DESCRIPTION "SyCL tests playground" LANGUAGES CXX)
 
 #set(CMAKE_C_COMPILER icx)
@@ -8,7 +8,13 @@ project(sycl-tests VERSION 0.1 DESCRIPTION "SyCL tests playground" LANGUAGES CXX
 find_package(IntelSYCL REQUIRED)
 
 macro(exe_from_single_source BASE_FILE_NAME)
-    add_executable(${BASE_FILE_NAME} ${BASE_FILE_NAME}.cpp)
+    add_executable(${BASE_FILE_NAME}
+        ${CMAKE_CURRENT_SOURCE_DIR}/${BASE_FILE_NAME}.cpp
+        #PROPERTIES
+        #ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        #LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+        #RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+    )
     if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         target_compile_options(${BASE_FILE_NAME} PRIVATE /debug:all)
         target_link_options(${BASE_FILE_NAME} PRIVATE /debug:all /Zi)
@@ -16,9 +22,9 @@ macro(exe_from_single_source BASE_FILE_NAME)
     add_sycl_to_target(TARGET ${BASE_FILE_NAME} SOURCES ${BASE_FILE_NAME}.cpp)
 endmacro()
 
-exe_from_single_source(hello_world)
-exe_from_single_source(sycl_device)
-exe_from_single_source(simple_codeplay_sycl_app)
-exe_from_single_source(a_plus_b)
-exe_from_single_source(a_plus_b_init_on_dev)
-exe_from_single_source(create_and_add_buffers)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+#set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+add_subdirectory(src)
