@@ -4,5 +4,6 @@ exe_from_single_source(simple_codeplay_sycl_app)
 exe_from_single_source(a_plus_b)
 exe_from_single_source(a_plus_b_init_on_dev)
 exe_from_single_source(create_and_add_buffers)
+exe_from_single_source(environment_query)
 
 add_subdirectory(lib)
